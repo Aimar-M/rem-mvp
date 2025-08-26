@@ -60,12 +60,12 @@ const Onboarding = () => {
   ];
 
   const growthOptions = [
-    { id: "creativity", label: "Creative Projects", emoji: "🎨" },
-    { id: "wellness", label: "Wellness & Self-Care", emoji: "🧘‍♀️" },
-    { id: "learning", label: "Learning & Skills", emoji: "📚" },
-    { id: "career", label: "Career Growth", emoji: "🚀" },
-    { id: "relationships", label: "Relationships", emoji: "💝" },
-    { id: "adventure", label: "Adventures & Travel", emoji: "✈️" },
+    { id: "creativity", label: "Creative Projects", emoji: "🎨", color: "peach" },
+    { id: "wellness", label: "Wellness & Self-Care", emoji: "🧘‍♀️", color: "sage" },
+    { id: "learning", label: "Learning & Skills", emoji: "📚", color: "sky" },
+    { id: "career", label: "Career Growth", emoji: "🚀", color: "lavender" },
+    { id: "relationships", label: "Relationships", emoji: "💝", color: "peach" },
+    { id: "adventure", label: "Adventures & Travel", emoji: "✈️", color: "sky" },
   ];
 
   const handleNext = () => {
@@ -109,13 +109,26 @@ const Onboarding = () => {
     }
   };
 
+  const getGrowthAreaClasses = (option: any) => {
+    const isSelected = data.growthAreas.includes(option.id);
+    const colorMap: { [key: string]: string } = {
+      sage: isSelected ? "border-sage-300 bg-sage-50 shadow-soft" : "border-sage-200 hover:border-sage-300 hover:bg-sage-25",
+      lavender: isSelected ? "border-lavender-300 bg-lavender-50 shadow-soft" : "border-lavender-200 hover:border-lavender-300 hover:bg-lavender-25",
+      peach: isSelected ? "border-peach-300 bg-peach-50 shadow-soft" : "border-peach-200 hover:border-peach-300 hover:bg-peach-25",
+      sky: isSelected ? "border-sky-300 bg-sky-50 shadow-soft" : "border-sky-200 hover:border-sky-300 hover:bg-sky-25",
+    };
+    
+    const baseClasses = "p-4 rounded-2xl border-2 transition-all duration-300 text-left hover:scale-105";
+    return `${baseClasses} ${colorMap[option.color] || colorMap.sage}`;
+  };
+
   const renderStepContent = () => {
     switch (currentStep) {
       case 0:
         return (
           <div className="text-center space-y-6">
-            <div className="text-6xl mb-4">🌱</div>
-            <p className="text-lg text-muted-foreground max-w-md mx-auto">
+            <div className="text-6xl mb-4 animate-float">🌱</div>
+            <p className="text-lg text-stone-600 max-w-md mx-auto font-plus-jakarta">
               Welcome to REM — your personal growth space where dreams take root
               and flourish.
             </p>
@@ -125,7 +138,7 @@ const Onboarding = () => {
       case 1:
         return (
           <div className="space-y-4">
-            <Label htmlFor="name" className="text-base font-medium">
+            <Label htmlFor="name" className="text-base font-medium text-stone-700">
               Your name
             </Label>
             <Input
@@ -135,7 +148,7 @@ const Onboarding = () => {
               onChange={(e) =>
                 setData((prev) => ({ ...prev, name: e.target.value }))
               }
-              className="text-lg py-3 rounded-2xl border-2 focus:border-purple-300 transition-colors"
+              className="text-lg py-3 rounded-2xl border-2 border-sage-200 focus:border-sage-400 focus:ring-sage-200 transition-all duration-300"
             />
           </div>
         );
@@ -143,7 +156,7 @@ const Onboarding = () => {
       case 2:
         return (
           <div className="space-y-4">
-            <Label htmlFor="bloom" className="text-base font-medium">
+            <Label htmlFor="bloom" className="text-base font-medium text-stone-700">
               Your big bloom
             </Label>
             <Textarea
@@ -153,7 +166,7 @@ const Onboarding = () => {
               onChange={(e) =>
                 setData((prev) => ({ ...prev, bigBloom: e.target.value }))
               }
-              className="min-h-[120px] text-lg p-4 rounded-2xl border-2 focus:border-purple-300 transition-colors resize-none"
+              className="min-h-[120px] text-lg p-4 rounded-2xl border-2 border-sage-200 focus:border-sage-400 focus:ring-sage-200 transition-all duration-300 resize-none"
             />
           </div>
         );
@@ -161,7 +174,7 @@ const Onboarding = () => {
       case 3:
         return (
           <div className="space-y-4">
-            <Label htmlFor="motivation" className="text-base font-medium">
+            <Label htmlFor="motivation" className="text-base font-medium text-stone-700">
               What's inspiring you?
             </Label>
             <Textarea
@@ -171,7 +184,7 @@ const Onboarding = () => {
               onChange={(e) =>
                 setData((prev) => ({ ...prev, motivation: e.target.value }))
               }
-              className="min-h-[120px] text-lg p-4 rounded-2xl border-2 focus:border-purple-300 transition-colors resize-none"
+              className="min-h-[120px] text-lg p-4 rounded-2xl border-2 border-sage-200 focus:border-sage-400 focus:ring-sage-200 transition-all duration-300 resize-none"
             />
           </div>
         );
@@ -179,7 +192,7 @@ const Onboarding = () => {
       case 4:
         return (
           <div className="space-y-6">
-            <Label className="text-base font-medium">
+            <Label className="text-base font-medium text-stone-700">
               Choose your growth gardens
             </Label>
             <div className="grid grid-cols-2 gap-3">
@@ -187,14 +200,10 @@ const Onboarding = () => {
                 <button
                   key={option.id}
                   onClick={() => toggleGrowthArea(option.id)}
-                  className={`p-4 rounded-2xl border-2 transition-all duration-200 text-left ${
-                    data.growthAreas.includes(option.id)
-                      ? "border-purple-300 bg-purple-50 shadow-md transform scale-105"
-                      : "border-gray-200 hover:border-purple-200 hover:bg-purple-25"
-                  }`}
+                  className={getGrowthAreaClasses(option)}
                 >
                   <div className="text-2xl mb-2">{option.emoji}</div>
-                  <div className="font-medium text-sm">{option.label}</div>
+                  <div className="font-medium text-sm text-stone-700">{option.label}</div>
                 </button>
               ))}
             </div>
@@ -204,13 +213,13 @@ const Onboarding = () => {
       case 5:
         return (
           <div className="text-center space-y-6">
-            <div className="text-6xl mb-4">🌺</div>
-            <p className="text-lg text-muted-foreground max-w-md mx-auto">
+            <div className="text-6xl mb-4 animate-bloom">🌺</div>
+            <p className="text-lg text-stone-600 max-w-md mx-auto font-plus-jakarta">
               Amazing! Your growth journey is about to begin. Let's turn those
               dreams into reality.
             </p>
-            <div className="bg-gradient-to-r from-purple-100 to-pink-100 p-4 rounded-2xl">
-              <p className="text-sm font-medium text-purple-800">
+            <div className="bg-gradient-to-r from-sage-100 to-lavender-100 p-4 rounded-2xl border border-sage-200">
+              <p className="text-sm font-medium text-sage-800">
                 "{data.bigBloom}" is ready to bloom! 🌱→🌸
               </p>
             </div>
@@ -223,7 +232,7 @@ const Onboarding = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-100 via-pink-50 to-blue-100 flex items-center justify-center p-4">
+    <div className="min-h-screen rem-gradient flex items-center justify-center p-4">
       <div className="w-full max-w-2xl">
         {/* Progress indicator */}
         <div className="mb-8">
@@ -232,12 +241,12 @@ const Onboarding = () => {
               <div
                 key={index}
                 className={`w-3 h-3 rounded-full transition-all duration-300 ${
-                  index <= currentStep ? "bg-purple-400" : "bg-purple-200"
+                  index <= currentStep ? "bg-sage-400" : "bg-sage-200"
                 }`}
               />
             ))}
           </div>
-          <p className="text-center text-sm text-muted-foreground">
+          <p className="text-center text-sm text-stone-500 font-plus-jakarta">
             Step {currentStep + 1} of {steps.length}
           </p>
         </div>
@@ -251,12 +260,12 @@ const Onboarding = () => {
             exit={{ opacity: 0, y: -20 }}
             transition={{ duration: 0.3 }}
           >
-            <Card className="bg-white/80 backdrop-blur-sm border-0 shadow-xl rounded-3xl">
+            <Card className="rem-card bg-white/90 backdrop-blur-sm border-sage-200 shadow-floating rounded-3xl">
               <CardHeader className="text-center pb-4">
-                <CardTitle className="text-2xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
+                <CardTitle className="text-2xl font-bold font-sora rem-text-gradient">
                   {steps[currentStep].title}
                 </CardTitle>
-                <p className="text-muted-foreground mt-2">
+                <p className="text-stone-600 mt-2 font-plus-jakarta">
                   {steps[currentStep].subtitle}
                 </p>
               </CardHeader>
@@ -268,7 +277,7 @@ const Onboarding = () => {
                     <Button
                       variant="outline"
                       onClick={() => setCurrentStep(currentStep - 1)}
-                      className="rounded-2xl px-6"
+                      className="rounded-2xl px-6 border-sage-200 hover:bg-sage-50 text-sage-700"
                     >
                       Back
                     </Button>
@@ -278,7 +287,7 @@ const Onboarding = () => {
                     {currentStep === steps.length - 1 ? (
                       <Button
                         onClick={handleComplete}
-                        className="rounded-2xl px-8 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600"
+                        className="rounded-2xl px-8 rem-accent hover:from-sage-500 hover:to-lavender-500 text-white"
                       >
                         Start Growing! 🌱
                       </Button>
@@ -286,7 +295,7 @@ const Onboarding = () => {
                       <Button
                         onClick={handleNext}
                         disabled={!canProceed()}
-                        className="rounded-2xl px-6 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 disabled:opacity-50"
+                        className="rounded-2xl px-6 rem-accent hover:from-sage-500 hover:to-lavender-500 disabled:opacity-50 text-white"
                       >
                         {currentStep === 0 ? "Let's Begin" : "Continue"}
                       </Button>

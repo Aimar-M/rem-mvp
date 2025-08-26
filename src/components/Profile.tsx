@@ -32,6 +32,7 @@ import {
   Heart,
   Sparkles,
 } from "lucide-react";
+import EnergyMeter from "./EnergyMeter";
 
 interface UserProfile {
   name: string;
@@ -213,12 +214,12 @@ const Profile = () => {
   const completionRate = (profile.completedGoals / profile.totalGoals) * 100;
 
   return (
-    <div className="w-full max-w-7xl mx-auto p-4 bg-gradient-to-br from-pink-50 via-purple-50 to-indigo-50 min-h-screen">
+    <div className="w-full max-w-7xl mx-auto p-4">
       <div className="mb-8">
-        <h1 className="text-4xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
-          Your Creative Space ✨
+        <h1 className="text-4xl font-bold font-sora rem-text-gradient">
+          Your Growth Garden ✨
         </h1>
-        <p className="text-gray-600 mt-2 text-lg">
+        <p className="text-stone-600 mt-2 text-lg font-plus-jakarta">
           Where your growth story unfolds — you're doing amazing! 🌸
         </p>
       </div>
@@ -493,6 +494,12 @@ const Profile = () => {
                   Look at all these amazing milestones you've unlocked!
                 </p>
               </div>
+              
+              {/* Energy Meter */}
+              <div className="mb-8">
+                <EnergyMeter energyLevel="medium" />
+              </div>
+              
               <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
                 {achievements.map((achievement) => (
                   <div

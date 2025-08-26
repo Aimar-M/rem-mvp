@@ -51,7 +51,7 @@ const KanbanBoard = ({
   initialColumns = {
     todo: {
       id: "todo",
-      title: "To Do",
+      title: "🌰 Seeds",
       tasks: [
         {
           id: "1",
@@ -71,7 +71,7 @@ const KanbanBoard = ({
     },
     inprogress: {
       id: "inprogress",
-      title: "In Progress",
+      title: "🌱 Growing",
       tasks: [
         {
           id: "3",
@@ -84,7 +84,7 @@ const KanbanBoard = ({
     },
     done: {
       id: "done",
-      title: "Done",
+      title: "🌸 Bloomed",
       tasks: [
         {
           id: "4",
@@ -241,35 +241,36 @@ const KanbanBoard = ({
   const getPriorityColor = (priority: string) => {
     switch (priority) {
       case "high":
-        return "bg-red-500";
+        return "bg-peach-500";
       case "medium":
-        return "bg-yellow-500";
+        return "bg-sky-500";
       case "low":
-        return "bg-green-500";
+        return "bg-sage-500";
       default:
-        return "bg-blue-500";
+        return "bg-lavender-500";
     }
   };
 
   return (
-    <div className="bg-background p-4 rounded-lg shadow-sm w-full">
-      <div className="flex justify-between items-center mb-6">
-        <h2 className="text-2xl font-bold">Roadmap Tasks</h2>
+    <div className="w-full">
+      <div className="flex justify-between items-center mb-8">
+        <h2 className="text-3xl font-bold font-sora rem-text-gradient">Task Garden 🌱</h2>
       </div>
 
       <DragDropContext onDragEnd={handleDragEnd}>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {Object.values(columns).map((column) => (
-            <div key={column.id} className="bg-muted/30 rounded-lg p-4">
-              <div className="flex justify-between items-center mb-4">
-                <h3 className="font-semibold text-lg">{column.title}</h3>
+            <div key={column.id} className="bg-white/60 backdrop-blur-sm rounded-2xl p-6 border border-stone-200 shadow-soft">
+              <div className="flex justify-between items-center mb-6">
+                <h3 className="font-semibold text-lg text-stone-800">{column.title}</h3>
                 <Button
                   variant="ghost"
                   size="sm"
                   onClick={() => openAddTaskDialog(column.id)}
+                  className="hover:bg-sage-50 text-sage-600 rounded-xl"
                 >
                   <PlusCircle className="h-4 w-4 mr-1" />
-                  Add
+                  Plant Seed
                 </Button>
               </div>
 
@@ -293,17 +294,17 @@ const KanbanBoard = ({
                             {...provided.dragHandleProps}
                             className="mb-3"
                           >
-                            <Card>
-                              <CardHeader className="p-3 pb-0">
+                            <Card className="rem-card border-sage-200 hover:scale-105 transition-all duration-300 mb-4">
+                              <CardHeader className="p-4 pb-2">
                                 <div className="flex justify-between items-start">
-                                  <CardTitle className="text-base">
+                                  <CardTitle className="text-base text-sage-700">
                                     {task.title}
                                   </CardTitle>
                                   <div className="flex space-x-1">
                                     <Button
                                       variant="ghost"
                                       size="sm"
-                                      className="h-7 w-7 p-0"
+                                      className="h-7 w-7 p-0 hover:bg-sage-50 text-sage-600"
                                       onClick={() =>
                                         openEditTaskDialog(task, column.id)
                                       }
@@ -313,7 +314,7 @@ const KanbanBoard = ({
                                     <Button
                                       variant="ghost"
                                       size="sm"
-                                      className="h-7 w-7 p-0"
+                                      className="h-7 w-7 p-0 hover:bg-peach-50 text-peach-600"
                                       onClick={() =>
                                         handleDeleteTask(task.id, column.id)
                                       }
@@ -323,19 +324,19 @@ const KanbanBoard = ({
                                   </div>
                                 </div>
                               </CardHeader>
-                              <CardContent className="p-3 pt-2">
-                                <p className="text-sm text-muted-foreground mb-2">
+                              <CardContent className="p-4 pt-2">
+                                <p className="text-sm text-stone-600 mb-3">
                                   {task.description}
                                 </p>
                                 <div className="flex justify-between items-center">
-                                  <div className="flex items-center">
+                                  <div className="flex items-center text-stone-500">
                                     <Calendar className="h-3 w-3 mr-1" />
                                     <span className="text-xs">
                                       {task.dueDate}
                                     </span>
                                   </div>
                                   <Badge
-                                    className={`${getPriorityColor(task.priority)} text-white`}
+                                    className={`${getPriorityColor(task.priority)} text-white rounded-full px-2 py-1`}
                                   >
                                     {task.priority}
                                   </Badge>
@@ -357,35 +358,37 @@ const KanbanBoard = ({
 
       {/* Add Task Dialog */}
       <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
-        <DialogContent>
+        <DialogContent className="bg-white/95 backdrop-blur-xl border-sage-200 rounded-2xl shadow-floating">
           <DialogHeader>
-            <DialogTitle>Add New Task</DialogTitle>
+            <DialogTitle className="text-sage-700">Plant New Seed</DialogTitle>
           </DialogHeader>
           <div className="grid gap-4 py-4">
             <div className="grid gap-2">
-              <label htmlFor="title">Title</label>
+              <label htmlFor="title" className="text-stone-700 font-medium">Seed Name</label>
               <Input
                 id="title"
                 value={newTask.title || ""}
                 onChange={(e) =>
                   setNewTask({ ...newTask, title: e.target.value })
                 }
-                placeholder="Task title"
+                placeholder="What will this seed grow into?"
+                className="rounded-2xl border-sage-200 focus:border-sage-400 focus:ring-sage-200"
               />
             </div>
             <div className="grid gap-2">
-              <label htmlFor="description">Description</label>
+              <label htmlFor="description" className="text-stone-700 font-medium">Growth Plan</label>
               <Textarea
                 id="description"
                 value={newTask.description || ""}
                 onChange={(e) =>
                   setNewTask({ ...newTask, description: e.target.value })
                 }
-                placeholder="Task description"
+                placeholder="How will you nurture this seed?"
+                className="rounded-2xl border-sage-200 focus:border-sage-400 focus:ring-sage-200"
               />
             </div>
             <div className="grid gap-2">
-              <label htmlFor="dueDate">Due Date</label>
+              <label htmlFor="dueDate" className="text-stone-700 font-medium">Bloom Date</label>
               <Input
                 id="dueDate"
                 type="date"
@@ -393,10 +396,11 @@ const KanbanBoard = ({
                 onChange={(e) =>
                   setNewTask({ ...newTask, dueDate: e.target.value })
                 }
+                className="rounded-2xl border-sage-200 focus:border-sage-400 focus:ring-sage-200"
               />
             </div>
             <div className="grid gap-2">
-              <label htmlFor="priority">Priority</label>
+              <label htmlFor="priority" className="text-stone-700 font-medium">Growth Priority</label>
               <Select
                 value={newTask.priority}
                 onValueChange={(value) =>
@@ -406,31 +410,31 @@ const KanbanBoard = ({
                   })
                 }
               >
-                <SelectTrigger>
-                  <SelectValue placeholder="Select priority" />
+                <SelectTrigger className="rounded-2xl border-sage-200 focus:border-sage-400 focus:ring-sage-200">
+                  <SelectValue placeholder="How important is this seed?" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="low">Low</SelectItem>
-                  <SelectItem value="medium">Medium</SelectItem>
-                  <SelectItem value="high">High</SelectItem>
+                  <SelectItem value="low">Gentle Growth</SelectItem>
+                  <SelectItem value="medium">Steady Growth</SelectItem>
+                  <SelectItem value="high">Rapid Growth</SelectItem>
                 </SelectContent>
               </Select>
             </div>
           </div>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setIsAddDialogOpen(false)}>
+            <Button variant="outline" onClick={() => setIsAddDialogOpen(false)} className="border-sage-200 hover:bg-sage-50 text-sage-700 rounded-2xl">
               Cancel
             </Button>
-            <Button onClick={handleAddTask}>Add Task</Button>
+            <Button onClick={handleAddTask} className="rem-accent hover:from-sage-500 hover:to-lavender-500 text-white rounded-2xl">Plant Seed</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
 
       {/* Edit Task Dialog */}
       <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
-        <DialogContent>
+        <DialogContent className="bg-white/95 backdrop-blur-xl border-sage-200 rounded-2xl shadow-floating">
           <DialogHeader>
-            <DialogTitle>Edit Task</DialogTitle>
+            <DialogTitle className="text-sage-700">Nurture Seed</DialogTitle>
           </DialogHeader>
           {currentTask && (
             <div className="grid gap-4 py-4">
@@ -497,10 +501,11 @@ const KanbanBoard = ({
             <Button
               variant="outline"
               onClick={() => setIsEditDialogOpen(false)}
+              className="border-sage-200 hover:bg-sage-50 text-sage-700 rounded-2xl"
             >
               Cancel
             </Button>
-            <Button onClick={handleEditTask}>Save Changes</Button>
+            <Button onClick={handleEditTask} className="rem-accent hover:from-sage-500 hover:to-lavender-500 text-white rounded-2xl">Save Growth</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>

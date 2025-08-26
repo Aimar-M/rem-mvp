@@ -38,24 +38,27 @@ const Login: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen flex items-center justify-center rem-gradient py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-md w-full space-y-8">
         <div className="text-center">
-          <h1 className="text-4xl font-bold text-primary mb-2">REM</h1>
-          <p className="text-gray-600">Your productivity companion</p>
+          <div className="flex items-center justify-center space-x-3 mb-4">
+            <h1 className="text-4xl font-bold font-sora rem-text-gradient">REM</h1>
+            <span className="text-2xl">🌙</span>
+          </div>
+          <p className="text-stone-600 font-plus-jakarta">Your growth garden awaits</p>
         </div>
 
-        <Card>
+        <Card className="rem-card border-sage-200 shadow-floating">
           <CardHeader>
-            <CardTitle>Sign in to your account</CardTitle>
-            <CardDescription>
-              Enter your email and password to access your dashboard
+            <CardTitle className="text-sage-700">Welcome to your garden</CardTitle>
+            <CardDescription className="text-stone-600">
+              Enter your email and password to access your growth space
             </CardDescription>
           </CardHeader>
           <CardContent>
             <form onSubmit={handleSubmit} className="space-y-4">
               <div>
-                <Label htmlFor="email">Email address</Label>
+                <Label htmlFor="email" className="text-stone-700 font-medium">Email address</Label>
                 <Input
                   id="email"
                   type="email"
@@ -63,11 +66,12 @@ const Login: React.FC = () => {
                   onChange={(e) => setEmail(e.target.value)}
                   required
                   placeholder="Enter your email"
+                  className="rounded-2xl border-sage-200 focus:border-sage-400 focus:ring-sage-200"
                 />
               </div>
               
               <div>
-                <Label htmlFor="password">Password</Label>
+                <Label htmlFor="password" className="text-stone-700 font-medium">Password</Label>
                 <Input
                   id="password"
                   type="password"
@@ -75,19 +79,20 @@ const Login: React.FC = () => {
                   onChange={(e) => setPassword(e.target.value)}
                   required
                   placeholder="Enter your password"
+                  className="rounded-2xl border-sage-200 focus:border-sage-400 focus:ring-sage-200"
                 />
               </div>
 
-              <Button type="submit" className="w-full" disabled={loading}>
-                {loading ? 'Signing in...' : 'Sign in'}
+              <Button type="submit" className="w-full rem-accent hover:from-sage-500 hover:to-lavender-500 text-white rounded-2xl" disabled={loading}>
+                {loading ? 'Entering garden...' : 'Enter Garden'}
               </Button>
             </form>
 
             <div className="mt-6 text-center">
-              <p className="text-sm text-gray-600">
+              <p className="text-sm text-stone-600">
                 Don't have an account?{' '}
-                <Link to="/register" className="font-medium text-primary hover:underline">
-                  Sign up
+                <Link to="/register" className="font-medium text-sage-600 hover:text-sage-700 hover:underline">
+                  Join the garden
                 </Link>
               </p>
             </div>

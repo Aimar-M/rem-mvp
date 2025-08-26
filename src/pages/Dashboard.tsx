@@ -27,7 +27,13 @@ import {
   MessageCircle,
   ThumbsUp,
   Share2,
+  Sun,
+  Moon,
+  Star,
+  Leaf,
+  Flower,
 } from "lucide-react";
+import EnergyMeter from "../components/EnergyMeter";
 
 const Dashboard: React.FC = () => {
   const { user } = useAuth();
@@ -139,7 +145,7 @@ const Dashboard: React.FC = () => {
     value,
     size = 80,
     strokeWidth = 8,
-    color = "#22c55e",
+    color = "#5a6b5a",
   }: {
     value: number;
     size?: number;
@@ -151,13 +157,13 @@ const Dashboard: React.FC = () => {
     const offset = circumference - (value / 100) * circumference;
 
     return (
-      <div className="relative grow-ring">
+      <div className="relative bloom">
         <svg width={size} height={size} className="transform -rotate-90">
           <circle
             cx={size / 2}
             cy={size / 2}
             r={radius}
-            stroke="#e5e7eb"
+            stroke="#e7e5e4"
             strokeWidth={strokeWidth}
             fill="transparent"
           />
@@ -175,7 +181,7 @@ const Dashboard: React.FC = () => {
           />
         </svg>
         <div className="absolute inset-0 flex items-center justify-center">
-          <span className="text-lg font-bold">{value}%</span>
+          <span className="text-lg font-bold text-sage-700">{value}%</span>
         </div>
       </div>
     );
@@ -184,24 +190,31 @@ const Dashboard: React.FC = () => {
   const getTypeIcon = (type: string) => {
     switch (type) {
       case "achievement":
-        return <Target className="h-4 w-4 text-green-500" />;
+        return <Star className="h-4 w-4 text-peach-500" />;
       case "reflection":
-        return <Heart className="h-4 w-4 text-pink-500" />;
+        return <Heart className="h-4 w-4 text-lavender-500" />;
       case "learning":
-        return <BookOpen className="h-4 w-4 text-blue-500" />;
+        return <BookOpen className="h-4 w-4 text-sky-500" />;
       default:
-        return <Sparkles className="h-4 w-4 text-purple-500" />;
+        return <Sparkles className="h-4 w-4 text-sage-500" />;
     }
+  };
+
+  const getTimeIcon = () => {
+    const hour = currentTime.getHours();
+    if (hour < 12) return <Sun className="h-6 w-6 text-peach-500" />;
+    if (hour < 17) return <Sun className="h-6 w-6 text-sky-500" />;
+    return <Moon className="h-6 w-6 text-lavender-500" />;
   };
 
   return (
     <Layout>
-      <div className="space-y-6 relative">
+      <div className="space-y-8 relative animate-fade-in">
         {/* Confetti Animation */}
         {confettiElements.map((_, index) => (
           <div
             key={index}
-            className="confetti absolute w-2 h-2 bg-gradient-to-r from-pink-400 to-purple-500 rounded-full"
+            className="confetti absolute w-2 h-2 bg-gradient-to-r from-peach-400 to-lavender-400 rounded-full"
             style={{
               left: `${Math.random() * 100}%`,
               top: "20%",
@@ -211,24 +224,26 @@ const Dashboard: React.FC = () => {
         ))}
 
         {/* Welcome Section */}
-        <div className="bg-gradient-to-br from-pink-100 via-purple-50 to-indigo-100 dark:from-pink-900/20 dark:via-purple-900/20 dark:to-indigo-900/20 rounded-2xl p-8 border-none shadow-lg">
+        <div className="rem-card bg-gradient-to-br from-cream-50 via-sage-50 to-lavender-50 p-8 border-sage-200">
           <div className="flex items-center justify-between">
-            <div>
-              <h1 className="text-3xl font-bold bg-gradient-to-r from-pink-600 to-purple-600 bg-clip-text text-transparent mb-2">
-                {getGreeting()}, {user?.name?.split(" ")[0] || "friend"} 🌞 —
-                ready to bloom?
+            <div className="flex-1">
+              <div className="flex items-center space-x-3 mb-3">
+                {getTimeIcon()}
+                <h1 className="text-4xl font-bold font-sora rem-text-gradient">
+                  {getGreeting()}, {user?.name?.split(" ")[0] || "friend"} 🌱
               </h1>
-              <p className="text-lg text-muted-foreground">
-                You're growing beautifully! Let's see what magic you'll create
-                today ✨
+              </div>
+              <p className="text-xl text-stone-600 font-plus-jakarta">
+                Ready to nurture your next big bloom? ✨
+              </p>
+              <p className="text-lg text-stone-500 mt-2">
+                You're growing beautifully! Let's see what magic you'll create today
               </p>
             </div>
-            <div className="flex items-center bg-white/80 dark:bg-gray-800/80 p-4 rounded-2xl shadow-sm backdrop-blur-sm">
-              <div
-                className={`pulse-glow bg-gradient-to-r from-green-400 to-emerald-500 text-white px-4 py-2 rounded-full font-bold flex items-center`}
-              >
-                <CheckCircle className="h-5 w-5 mr-2" />
-                {stats.streakDays} day bloom streak! 🌱
+            <div className="flex items-center bg-white/80 p-6 rounded-2xl shadow-soft backdrop-blur-sm border border-sage-100">
+              <div className="pulse-glow bg-gradient-to-r from-sage-400 to-lavender-400 text-white px-6 py-3 rounded-full font-bold flex items-center">
+                <Leaf className="h-5 w-5 mr-2" />
+                {stats.streakDays} day growth streak! 🌱
               </div>
             </div>
           </div>
@@ -236,126 +251,132 @@ const Dashboard: React.FC = () => {
 
         {/* Growth Rings Stats */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          <Card className="hover:shadow-lg transition-all duration-300 border-2 hover:border-green-200">
+          <Card className="rem-card hover:scale-105 transition-all duration-300 border-sage-200">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium text-green-700">
+              <CardTitle className="text-sm font-medium text-sage-700">
                 Growth Progress
               </CardTitle>
-              <Target className="h-4 w-4 text-green-600" />
+              <Target className="h-4 w-4 text-sage-600" />
             </CardHeader>
             <CardContent className="flex flex-col items-center pt-4">
-              <CircularProgress value={completionRate} color="#22c55e" />
-              <p className="text-xs text-muted-foreground mt-2 text-center">
+              <CircularProgress value={completionRate} color="#5a6b5a" />
+              <p className="text-xs text-stone-500 mt-2 text-center">
                 {stats.tasksCompleted} of {stats.tasksTotal} seeds planted
               </p>
             </CardContent>
           </Card>
 
-          <Card className="hover:shadow-lg transition-all duration-300 border-2 hover:border-purple-200">
+          <Card className="rem-card hover:scale-105 transition-all duration-300 border-lavender-200">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium text-purple-700">
-                Journal Reflections
+              <CardTitle className="text-sm font-medium text-lavender-700">
+                Reflection Pool
               </CardTitle>
-              <BookOpen className="h-4 w-4 text-purple-600" />
+              <BookOpen className="h-4 w-4 text-lavender-600" />
             </CardHeader>
             <CardContent className="flex flex-col items-center pt-4">
               <CircularProgress
                 value={Math.min((stats.journalEntries / 7) * 100, 100)}
-                color="#a855f7"
+                color="#8b5cf6"
               />
-              <p className="text-xs text-muted-foreground mt-2 text-center">
+              <p className="text-xs text-stone-500 mt-2 text-center">
                 {stats.journalEntries} reflections this week
               </p>
             </CardContent>
           </Card>
 
-          <Card className="hover:shadow-lg transition-all duration-300 border-2 hover:border-blue-200">
+          <Card className="rem-card hover:scale-105 transition-all duration-300 border-sky-200">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium text-blue-700">
+              <CardTitle className="text-sm font-medium text-sky-700">
                 Upcoming Blooms
               </CardTitle>
-              <Clock className="h-4 w-4 text-blue-600" />
+              <Clock className="h-4 w-4 text-sky-600" />
             </CardHeader>
             <CardContent className="flex flex-col items-center pt-4">
-              <div className="text-3xl font-bold text-blue-600 mb-2">
+              <div className="text-3xl font-bold text-sky-600 mb-2">
                 {stats.upcomingDeadlines}
               </div>
-              <p className="text-xs text-muted-foreground text-center">
+              <p className="text-xs text-stone-500 text-center">
                 Ready to flourish soon
               </p>
             </CardContent>
           </Card>
 
-          <Card className="hover:shadow-lg transition-all duration-300 border-2 hover:border-pink-200">
+          <Card className="rem-card hover:scale-105 transition-all duration-300 border-peach-200">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium text-pink-700">
+              <CardTitle className="text-sm font-medium text-peach-700">
                 Garden Rooms
               </CardTitle>
-              <Users className="h-4 w-4 text-pink-600" />
+              <Users className="h-4 w-4 text-peach-600" />
             </CardHeader>
             <CardContent className="flex flex-col items-center pt-4">
-              <div className="text-3xl font-bold text-pink-600 mb-2">
+              <div className="text-3xl font-bold text-peach-600 mb-2">
                 {stats.activeRooms}
               </div>
-              <p className="text-xs text-muted-foreground text-center">
+              <p className="text-xs text-stone-500 text-center">
                 Growing together
               </p>
             </CardContent>
           </Card>
         </div>
 
+        {/* Energy Meter Preview */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <EnergyMeter variant="preview" energyLevel="medium" />
+          <div className="hidden lg:block" /> {/* Spacer for 3-column layout */}
+        </div>
+
         {/* Quick Actions */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          <Card className="hover:shadow-lg transition-all duration-300 hover:scale-105 bg-gradient-to-br from-green-50 to-emerald-50 dark:from-green-900/10 dark:to-emerald-900/10">
+          <Card className="rem-card hover:scale-105 transition-all duration-300 bg-gradient-to-br from-sage-50 to-emerald-50 border-sage-200">
             <CardHeader>
-              <CardTitle className="flex items-center text-green-700">
+              <CardTitle className="flex items-center text-sage-700">
                 <Kanban className="mr-2 h-5 w-5" />
                 Task Garden
               </CardTitle>
-              <CardDescription>Tend to your growing projects</CardDescription>
+              <CardDescription className="text-sage-600">Tend to your growing projects</CardDescription>
             </CardHeader>
             <CardContent>
               <Button
                 asChild
-                className="w-full bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600"
+                className="w-full bg-gradient-to-r from-sage-500 to-emerald-500 hover:from-sage-600 hover:to-emerald-600 text-white rounded-2xl"
               >
                 <Link to="/kanban">Nurture Tasks</Link>
               </Button>
             </CardContent>
           </Card>
 
-          <Card className="hover:shadow-lg transition-all duration-300 hover:scale-105 bg-gradient-to-br from-purple-50 to-pink-50 dark:from-purple-900/10 dark:to-pink-900/10">
+          <Card className="rem-card hover:scale-105 transition-all duration-300 bg-gradient-to-br from-lavender-50 to-pink-50 border-lavender-200">
             <CardHeader>
-              <CardTitle className="flex items-center text-purple-700">
+              <CardTitle className="flex items-center text-lavender-700">
                 <Calendar className="mr-2 h-5 w-5" />
                 Time Blossoms
               </CardTitle>
-              <CardDescription>See when your dreams will bloom</CardDescription>
+              <CardDescription className="text-lavender-600">See when your dreams will bloom</CardDescription>
             </CardHeader>
             <CardContent>
               <Button
                 asChild
                 variant="outline"
-                className="w-full border-purple-200 hover:bg-purple-50"
+                className="w-full border-lavender-200 hover:bg-lavender-50 text-lavender-700 rounded-2xl"
               >
                 <Link to="/calendar">View Timeline</Link>
               </Button>
             </CardContent>
           </Card>
 
-          <Card className="hover:shadow-lg transition-all duration-300 hover:scale-105 bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-900/10 dark:to-indigo-900/10">
+          <Card className="rem-card hover:scale-105 transition-all duration-300 bg-gradient-to-br from-sky-50 to-indigo-50 border-sky-200">
             <CardHeader>
-              <CardTitle className="flex items-center text-blue-700">
+              <CardTitle className="flex items-center text-sky-700">
                 <BookOpen className="mr-2 h-5 w-5" />
                 Reflection Pool
               </CardTitle>
-              <CardDescription>Capture your growth moments</CardDescription>
+              <CardDescription className="text-sky-600">Capture your growth moments</CardDescription>
             </CardHeader>
             <CardContent>
               <Button
                 asChild
                 variant="outline"
-                className="w-full border-blue-200 hover:bg-blue-50"
+                className="w-full border-sky-200 hover:bg-sky-50 text-sky-700 rounded-2xl"
               >
                 <Link to="/journal">Write Reflection</Link>
               </Button>
@@ -364,16 +385,16 @@ const Dashboard: React.FC = () => {
         </div>
 
         {/* Social Feed Preview */}
-        <Card className="bg-gradient-to-br from-white to-gray-50 dark:from-gray-900 dark:to-gray-800">
+        <Card className="rem-card bg-gradient-to-br from-white to-stone-50">
           <CardHeader>
             <div className="flex items-center justify-between">
               <div>
-                <CardTitle className="text-xl">Community Garden 🌸</CardTitle>
-                <CardDescription>
+                <CardTitle className="text-xl text-stone-800">Community Garden 🌸</CardTitle>
+                <CardDescription className="text-stone-600">
                   See how your friends are blooming
                 </CardDescription>
               </div>
-              <Button asChild variant="outline" className="rounded-full">
+              <Button asChild variant="outline" className="rounded-2xl border-sage-200 hover:bg-sage-50 text-sage-700">
                 <Link to="/rooms">Join the Garden</Link>
               </Button>
             </div>
@@ -383,15 +404,15 @@ const Dashboard: React.FC = () => {
               {feedUpdates.map((update) => (
                 <div
                   key={update.id}
-                  className="bg-white dark:bg-gray-800 rounded-2xl p-4 shadow-sm hover:shadow-md transition-all duration-300 border border-gray-100 dark:border-gray-700"
+                  className="bg-white rounded-2xl p-4 shadow-gentle hover:shadow-soft transition-all duration-300 border border-stone-100"
                 >
                   <div className="flex items-start space-x-3">
-                    <Avatar className="h-10 w-10 ring-2 ring-pink-100">
+                    <Avatar className="h-10 w-10 ring-2 ring-sage-100">
                       <AvatarImage
                         src={update.user.avatar}
                         alt={update.user.name}
                       />
-                      <AvatarFallback>
+                      <AvatarFallback className="bg-sage-100 text-sage-700">
                         {update.user.name
                           .split(" ")
                           .map((n) => n[0])
@@ -400,31 +421,31 @@ const Dashboard: React.FC = () => {
                     </Avatar>
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center space-x-2 mb-1">
-                        <p className="font-semibold text-sm">
+                        <p className="font-semibold text-sm text-stone-800">
                           {update.user.name}
                         </p>
-                        <p className="text-xs text-muted-foreground">
+                        <p className="text-xs text-stone-500">
                           {update.user.handle}
                         </p>
-                        <span className="text-xs text-muted-foreground">•</span>
-                        <p className="text-xs text-muted-foreground">
+                        <span className="text-xs text-stone-400">•</span>
+                        <p className="text-xs text-stone-500">
                           {update.timestamp}
                         </p>
                         {getTypeIcon(update.type)}
                       </div>
-                      <p className="text-sm leading-relaxed mb-3">
+                      <p className="text-sm leading-relaxed mb-3 text-stone-700">
                         {update.content}
                       </p>
-                      <div className="flex items-center space-x-4 text-xs text-muted-foreground">
-                        <button className="flex items-center space-x-1 hover:text-pink-500 transition-colors">
+                      <div className="flex items-center space-x-4 text-xs text-stone-500">
+                        <button className="flex items-center space-x-1 hover:text-peach-500 transition-colors">
                           <ThumbsUp className="h-3 w-3" />
                           <span>{update.likes}</span>
                         </button>
-                        <button className="flex items-center space-x-1 hover:text-blue-500 transition-colors">
+                        <button className="flex items-center space-x-1 hover:text-sky-500 transition-colors">
                           <MessageCircle className="h-3 w-3" />
                           <span>{update.comments}</span>
                         </button>
-                        <button className="flex items-center space-x-1 hover:text-green-500 transition-colors">
+                        <button className="flex items-center space-x-1 hover:text-sage-500 transition-colors">
                           <Share2 className="h-3 w-3" />
                           <span>Share</span>
                         </button>
@@ -438,12 +459,12 @@ const Dashboard: React.FC = () => {
         </Card>
 
         {/* Recent Tasks with Completion Animation */}
-        <Card>
+        <Card className="rem-card">
           <CardHeader>
             <div className="flex items-center justify-between">
               <div>
-                <CardTitle>Your Growing Seeds 🌱</CardTitle>
-                <CardDescription>
+                <CardTitle className="text-stone-800">Your Growing Seeds 🌱</CardTitle>
+                <CardDescription className="text-stone-600">
                   Tasks blooming into achievements
                 </CardDescription>
               </div>
@@ -451,7 +472,7 @@ const Dashboard: React.FC = () => {
                 onClick={triggerConfetti}
                 variant="outline"
                 size="sm"
-                className="rounded-full"
+                className="rounded-2xl border-sage-200 hover:bg-sage-50 text-sage-700"
               >
                 <Sparkles className="h-4 w-4 mr-1" />
                 Celebrate!
@@ -463,16 +484,16 @@ const Dashboard: React.FC = () => {
               {recentTasks.map((task) => (
                 <div
                   key={task.id}
-                  className="flex items-center justify-between p-4 border rounded-xl hover:bg-accent/50 transition-all duration-300"
+                  className="flex items-center justify-between p-4 border border-stone-100 rounded-2xl hover:bg-sage-50/50 transition-all duration-300"
                 >
                   <div className="flex items-center space-x-3">
                     <div
                       className={`w-4 h-4 rounded-full flex items-center justify-center ${
                         task.status === "completed"
-                          ? "bg-green-500 animate-pulse"
+                          ? "bg-sage-500 animate-pulse"
                           : task.status === "in-progress"
-                            ? "bg-blue-500"
-                            : "bg-gray-300"
+                            ? "bg-sky-500"
+                            : "bg-stone-300"
                       }`}
                     >
                       {task.status === "completed" && (
@@ -483,13 +504,13 @@ const Dashboard: React.FC = () => {
                       <span
                         className={`font-medium ${
                           task.status === "completed"
-                            ? "line-through text-muted-foreground"
-                            : ""
+                            ? "line-through text-stone-400"
+                            : "text-stone-700"
                         }`}
                       >
                         {task.title}
                       </span>
-                      <p className="text-xs text-muted-foreground">
+                      <p className="text-xs text-stone-500">
                         by {task.user}
                       </p>
                     </div>
@@ -499,7 +520,11 @@ const Dashboard: React.FC = () => {
                       variant={
                         task.status === "completed" ? "default" : "secondary"
                       }
-                      className="rounded-full"
+                      className={`rounded-full ${
+                        task.status === "completed" 
+                          ? "bg-sage-100 text-sage-700 border-sage-200" 
+                          : "bg-stone-100 text-stone-600 border-stone-200"
+                      }`}
                     >
                       {task.status === "completed"
                         ? "🌸 Bloomed"
@@ -507,7 +532,7 @@ const Dashboard: React.FC = () => {
                           ? "🌱 Growing"
                           : "🌰 Seed"}
                     </Badge>
-                    <div className="text-sm text-muted-foreground">
+                    <div className="text-sm text-stone-500">
                       {new Date(task.dueDate).toLocaleDateString()}
                     </div>
                   </div>
@@ -515,7 +540,7 @@ const Dashboard: React.FC = () => {
               ))}
             </div>
             <div className="mt-4">
-              <Button asChild variant="outline" className="w-full rounded-full">
+              <Button asChild variant="outline" className="w-full rounded-2xl border-sage-200 hover:bg-sage-50 text-sage-700">
                 <Link to="/kanban">Tend to All Seeds</Link>
               </Button>
             </div>

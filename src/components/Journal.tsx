@@ -1,353 +1,319 @@
-import React, { useState } from "react";
-import { motion } from "framer-motion";
+import React, { useState, useRef, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { Input } from "@/components/ui/input";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Badge } from "@/components/ui/badge";
-import {
-  BookOpen,
-  Calendar,
-  Edit,
-  Plus,
-  Save,
-  Sparkles,
-  TrendingUp,
-} from "lucide-react";
+import { Save, Sparkles, Send, Lightbulb, TrendingUp, Users } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 interface JournalEntry {
   id: string;
-  title: string;
   content: string;
+  mood: string;
   date: string;
-  type: "daily" | "weekly" | "reflection";
-  mood?: "great" | "good" | "okay" | "challenging";
-  aiSummary?: string;
+  aiInsights?: string;
 }
 
 const Journal = () => {
-  const [activeTab, setActiveTab] = useState("write");
-  const [newEntry, setNewEntry] = useState({
-    title: "",
-    content: "",
-    type: "daily" as "daily" | "weekly" | "reflection",
-    mood: "good" as "great" | "good" | "okay" | "challenging",
-  });
   const [entries, setEntries] = useState<JournalEntry[]>([
     {
       id: "1",
-      title: "First Week Progress",
-      content:
-        "Started learning React fundamentals. Completed the first three modules of the course. Feeling confident about the basics but need more practice with hooks.",
-      date: "2023-12-01",
-      type: "weekly",
-      mood: "good",
-      aiSummary:
-        "Making steady progress on React learning goals. Focus on hooks practice recommended.",
+      content: "Today I feel grateful for the small moments of peace. The way the sunlight filtered through my window this morning reminded me to slow down and appreciate the present. I'm proud of how I handled that difficult conversation at work - staying calm and listening instead of reacting immediately.",
+      mood: "😌",
+      date: "2024-01-15",
+      aiInsights: "Your reflection shows emotional intelligence and mindfulness. The way you describe finding peace in simple moments suggests a growing appreciation for presence."
     },
     {
       id: "2",
-      title: "Daily Reflection",
-      content:
-        "Today I worked on a small project using React. Built a simple todo app. Struggled with state management but eventually figured it out. Feeling more confident.",
-      date: "2023-12-05",
-      type: "daily",
-      mood: "great",
-      aiSummary:
-        "Breakthrough moment with state management. Confidence building through hands-on practice.",
+      content: "Finally understood that complex React concept I've been struggling with. It's amazing how things click when you step back and approach them from a different angle. This small win reminded me that persistence pays off, even when learning feels overwhelming.",
+      mood: "🌱",
+      date: "2024-01-14",
+      aiInsights: "This breakthrough reflects excellent problem-solving skills. Your ability to shift perspective when stuck is a valuable learning strategy."
     },
   ]);
 
-  const handleSaveEntry = () => {
-    if (!newEntry.title || !newEntry.content) return;
+  const [currentEntry, setCurrentEntry] = useState("");
+  const [currentMood, setCurrentMood] = useState("😌");
+  const [showAIInsights, setShowAIInsights] = useState(false);
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
 
-    const entry: JournalEntry = {
-      id: Date.now().toString(),
-      title: newEntry.title,
-      content: newEntry.content,
-      date: new Date().toISOString().split("T")[0],
-      type: newEntry.type,
-      mood: newEntry.mood,
-      aiSummary: "AI analysis will be generated based on your reflection...",
-    };
+  const moodOptions = ["🌞", "😌", "🌱", "😴", "🔥"];
 
-    setEntries([entry, ...entries]);
-    setNewEntry({
-      title: "",
-      content: "",
-      type: "daily",
-      mood: "good",
-    });
-    setActiveTab("entries");
-  };
+  const reflectionPrompts = [
+    "What's one thing you're proud of today?",
+    "How did your day move you closer to your goal?",
+    "What's a small win you had today?",
+    "What challenged you and how did you grow from it?",
+    "What are you grateful for right now?"
+  ];
 
-  const getMoodColor = (mood: string) => {
-    switch (mood) {
-      case "great":
-        return "bg-green-100 text-green-800";
-      case "good":
-        return "bg-blue-100 text-blue-800";
-      case "okay":
-        return "bg-yellow-100 text-yellow-800";
-      case "challenging":
-        return "bg-red-100 text-red-800";
-      default:
-        return "bg-gray-100 text-gray-800";
+  const [currentPromptIndex, setCurrentPromptIndex] = useState(0);
+
+  useEffect(() => {
+    // Rotate prompts every 10 seconds
+    const interval = setInterval(() => {
+      setCurrentPromptIndex((prev) => (prev + 1) % reflectionPrompts.length);
+    }, 10000);
+    return () => clearInterval(interval);
+  }, [reflectionPrompts.length]);
+
+  // Dynamic insights based on user's writing patterns
+  const getDynamicInsight = () => {
+    if (entries.length === 0) {
+      return "Start your reflection journey today! Every entry helps build self-awareness and growth.";
+    } else if (entries.length < 3) {
+      return "Great start! You're building a foundation for mindful reflection. Keep going!";
+    } else if (entries.length < 7) {
+      return "You're developing a consistent reflection habit. This practice will deepen your self-understanding.";
+    } else {
+      return "Impressive consistency! You're creating a valuable record of your growth journey.";
     }
   };
 
-  const getTypeIcon = (type: string) => {
-    switch (type) {
-      case "daily":
-        return <Calendar className="h-4 w-4" />;
-      case "weekly":
-        return <TrendingUp className="h-4 w-4" />;
-      case "reflection":
-        return <BookOpen className="h-4 w-4" />;
-      default:
-        return <BookOpen className="h-4 w-4" />;
+  const getMoodInsight = () => {
+    const recentMoods = entries.slice(0, 3).map(entry => entry.mood);
+    const positiveMoods = recentMoods.filter(mood => ['🌞', '😌', '🌱'].includes(mood));
+    
+    if (positiveMoods.length >= 2) {
+      return "Your recent reflections show a positive mindset. This energy will fuel your growth!";
+    } else if (recentMoods.includes('😴') || recentMoods.includes('🔥')) {
+      return "You're experiencing varied emotions. Remember, all feelings are valid and can lead to growth.";
+    } else {
+      return "Your mood patterns show emotional awareness. This self-reflection is building emotional intelligence.";
+    }
+  };
+
+  useEffect(() => {
+    // Auto-resize textarea
+    if (textareaRef.current) {
+      textareaRef.current.style.height = "auto";
+      textareaRef.current.style.height = textareaRef.current.scrollHeight + "px";
+    }
+  }, [currentEntry]);
+
+  const handleSaveEntry = () => {
+    if (currentEntry.trim()) {
+      const entry: JournalEntry = {
+        id: Date.now().toString(),
+        content: currentEntry,
+        mood: currentMood,
+        date: new Date().toISOString().split("T")[0],
+        aiInsights: "Your reflection shows deep self-awareness and growth mindset. Keep nurturing this practice of mindful observation."
+      };
+      setEntries([entry, ...entries]);
+      setCurrentEntry("");
+      setCurrentMood("😌");
+      setShowAIInsights(true);
+      
+      // Hide AI insights after 5 seconds
+      setTimeout(() => setShowAIInsights(false), 5000);
+    }
+  };
+
+  const handlePublishEntry = () => {
+    if (currentEntry.trim()) {
+      handleSaveEntry();
+      // Future: Share to community
     }
   };
 
   return (
-    <div className="w-full max-w-6xl mx-auto p-4 bg-white">
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900">Reflection Journal</h1>
-        <p className="text-gray-600 mt-2">
-          Document your journey, reflect on progress, and gain AI-powered
-          insights
+    <div className="w-full max-w-6xl mx-auto p-4">
+      {/* Header */}
+      <div className="text-center mb-12 animate-fade-in">
+        <h1 className="text-4xl font-bold font-sora rem-text-gradient mb-3">
+          Reflection Pool 🌸
+        </h1>
+        <p className="text-stone-600 font-plus-jakarta text-lg">
+          {new Date().toLocaleDateString('en-US', { 
+            weekday: 'long', 
+            year: 'numeric', 
+            month: 'long', 
+            day: 'numeric' 
+          })}
         </p>
       </div>
 
-      <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-        <TabsList className="grid w-full grid-cols-3 mb-8">
-          <TabsTrigger value="write">Write Entry</TabsTrigger>
-          <TabsTrigger value="entries">My Entries</TabsTrigger>
-          <TabsTrigger value="insights">AI Insights</TabsTrigger>
-        </TabsList>
-
-        <TabsContent value="write" className="space-y-6">
-          <Card>
-            <CardHeader>
-              <CardTitle>New Journal Entry</CardTitle>
-              <CardDescription>
-                Take a moment to reflect on your progress and experiences
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <label htmlFor="entry-title" className="text-sm font-medium">
-                    Entry Title
-                  </label>
-                  <Input
-                    id="entry-title"
-                    placeholder="What's on your mind today?"
-                    value={newEntry.title}
-                    onChange={(e) =>
-                      setNewEntry({ ...newEntry, title: e.target.value })
-                    }
-                  />
-                </div>
-                <div className="space-y-2">
-                  <label htmlFor="entry-type" className="text-sm font-medium">
-                    Entry Type
-                  </label>
-                  <select
-                    id="entry-type"
-                    className="w-full p-2 border rounded-md"
-                    value={newEntry.type}
-                    onChange={(e) =>
-                      setNewEntry({
-                        ...newEntry,
-                        type: e.target.value as
-                          | "daily"
-                          | "weekly"
-                          | "reflection",
-                      })
-                    }
-                  >
-                    <option value="daily">Daily Reflection</option>
-                    <option value="weekly">Weekly Review</option>
-                    <option value="reflection">General Reflection</option>
-                  </select>
-                </div>
-              </div>
-              <div className="space-y-2">
-                <label htmlFor="mood" className="text-sm font-medium">
-                  How are you feeling?
-                </label>
-                <select
-                  id="mood"
-                  className="w-full p-2 border rounded-md"
-                  value={newEntry.mood}
-                  onChange={(e) =>
-                    setNewEntry({
-                      ...newEntry,
-                      mood: e.target.value as
-                        | "great"
-                        | "good"
-                        | "okay"
-                        | "challenging",
-                    })
-                  }
-                >
-                  <option value="great">Great - Feeling accomplished</option>
-                  <option value="good">Good - Making progress</option>
-                  <option value="okay">Okay - Steady pace</option>
-                  <option value="challenging">
-                    Challenging - Need support
-                  </option>
-                </select>
-              </div>
-              <div className="space-y-2">
-                <label htmlFor="entry-content" className="text-sm font-medium">
-                  Your Reflection
-                </label>
-                <Textarea
-                  id="entry-content"
-                  placeholder="Share your thoughts, progress, challenges, and wins..."
-                  value={newEntry.content}
-                  onChange={(e) =>
-                    setNewEntry({ ...newEntry, content: e.target.value })
-                  }
-                  rows={8}
-                  className="resize-none"
-                />
-              </div>
-            </CardContent>
-            <CardFooter>
-              <Button onClick={handleSaveEntry} className="w-full">
-                <Save className="mr-2 h-4 w-4" />
-                Save Entry
-              </Button>
-            </CardFooter>
-          </Card>
-        </TabsContent>
-
-        <TabsContent value="entries" className="space-y-6">
-          <div className="flex items-center justify-between">
-            <h2 className="text-2xl font-bold">Journal Entries</h2>
-            <Button onClick={() => setActiveTab("write")}>
-              <Plus className="mr-2 h-4 w-4" />
-              New Entry
-            </Button>
+      {/* AI Reflection Prompt */}
+      <div className="mb-8 animate-fade-in">
+        <div className="bg-gradient-to-r from-sage-100 to-lavender-100 p-6 rounded-3xl border border-sage-200 shadow-soft">
+          <div className="flex items-start space-x-3">
+            <Lightbulb className="h-6 w-6 text-sage-600 mt-1 flex-shrink-0" />
+            <div>
+              <h3 className="font-semibold text-sage-800 mb-2 font-sora">
+                Today's Reflection Guide
+              </h3>
+              <p className="text-sage-700 font-plus-jakarta text-lg leading-relaxed">
+                {reflectionPrompts[currentPromptIndex]}
+              </p>
+            </div>
           </div>
+        </div>
+      </div>
 
-          <div className="space-y-4">
-            {entries.map((entry) => (
-              <motion.div
-                key={entry.id}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.3 }}
+      {/* Writing Area */}
+      <div className="bg-white rounded-3xl shadow-floating border border-sage-100 p-8 mb-8 animate-fade-in">
+        <Textarea
+          ref={textareaRef}
+          placeholder="Start writing your thoughts... Let your mind flow freely. There are no rules here, just honest reflection."
+          value={currentEntry}
+          onChange={(e) => setCurrentEntry(e.target.value)}
+          className="w-full min-h-[600px] border-0 text-lg text-stone-700 font-plus-jakarta leading-relaxed resize-none focus:ring-0 focus:outline-none placeholder:text-stone-400"
+          style={{ fontFamily: 'Plus Jakarta Sans, sans-serif' }}
+        />
+      </div>
+
+      {/* Mood Selector */}
+      <div className="flex justify-center mb-8 animate-fade-in">
+        <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-3 shadow-soft border border-sage-100">
+          <div className="flex space-x-3">
+            {moodOptions.map((mood) => (
+              <button
+                key={mood}
+                onClick={() => setCurrentMood(mood)}
+                className={cn(
+                  "text-2xl p-2 rounded-xl transition-all duration-200 hover:scale-110",
+                  currentMood === mood 
+                    ? "bg-sage-100 shadow-soft" 
+                    : "hover:bg-sage-50"
+                )}
               >
-                <Card>
-                  <CardHeader>
-                    <div className="flex items-center justify-between">
-                      <CardTitle className="flex items-center">
-                        {getTypeIcon(entry.type)}
-                        <span className="ml-2">{entry.title}</span>
-                      </CardTitle>
-                      <div className="flex items-center space-x-2">
-                        <Badge className={getMoodColor(entry.mood || "good")}>
-                          {entry.mood}
-                        </Badge>
-                        <Badge variant="outline">
-                          {new Date(entry.date).toLocaleDateString()}
-                        </Badge>
-                        <Button variant="ghost" size="sm">
-                          <Edit className="h-4 w-4" />
-                        </Button>
-                      </div>
-                    </div>
-                  </CardHeader>
-                  <CardContent>
-                    <p className="text-gray-700 mb-4">{entry.content}</p>
-                    {entry.aiSummary && (
-                      <div className="bg-blue-50 p-3 rounded-lg border-l-4 border-blue-400">
-                        <div className="flex items-center mb-2">
-                          <Sparkles className="h-4 w-4 text-blue-600 mr-2" />
-                          <span className="text-sm font-medium text-blue-800">
-                            AI Insight
-                          </span>
-                        </div>
-                        <p className="text-sm text-blue-700">
-                          {entry.aiSummary}
-                        </p>
-                      </div>
-                    )}
-                  </CardContent>
-                </Card>
-              </motion.div>
+                {mood}
+              </button>
             ))}
           </div>
-        </TabsContent>
+        </div>
+      </div>
 
-        <TabsContent value="insights" className="space-y-6">
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center">
-                <Sparkles className="mr-2 h-5 w-5 text-primary" />
-                AI-Powered Insights
-              </CardTitle>
-              <CardDescription>
-                Discover patterns and trends in your reflection journey
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="space-y-4">
-                  <h3 className="text-lg font-medium">Progress Patterns</h3>
-                  <div className="bg-green-50 p-4 rounded-lg">
-                    <h4 className="font-medium text-green-800">
-                      Consistent Growth
-                    </h4>
-                    <p className="text-sm text-green-700 mt-1">
-                      Your entries show steady progress in technical skills over
-                      the past month.
-                    </p>
-                  </div>
-                  <div className="bg-blue-50 p-4 rounded-lg">
-                    <h4 className="font-medium text-blue-800">
-                      Learning Momentum
-                    </h4>
-                    <p className="text-sm text-blue-700 mt-1">
-                      You're building confidence through hands-on practice and
-                      project work.
-                    </p>
-                  </div>
-                </div>
-                <div className="space-y-4">
-                  <h3 className="text-lg font-medium">Recommendations</h3>
-                  <div className="bg-yellow-50 p-4 rounded-lg">
-                    <h4 className="font-medium text-yellow-800">Focus Areas</h4>
-                    <p className="text-sm text-yellow-700 mt-1">
-                      Consider dedicating more time to advanced React concepts
-                      like context and custom hooks.
-                    </p>
-                  </div>
-                  <div className="bg-purple-50 p-4 rounded-lg">
-                    <h4 className="font-medium text-purple-800">Next Steps</h4>
-                    <p className="text-sm text-purple-700 mt-1">
-                      Your progress suggests you're ready to tackle more complex
-                      projects.
-                    </p>
-                  </div>
-                </div>
+      {/* Action Buttons */}
+      <div className="flex justify-center space-x-4 animate-fade-in">
+        <Button
+          onClick={handleSaveEntry}
+          disabled={!currentEntry.trim()}
+          className="rem-accent hover:from-sage-500 hover:to-lavender-500 text-white rounded-2xl px-8 py-3 shadow-soft hover:shadow-floating transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          <Save className="h-5 w-5 mr-2" />
+          Save Reflection
+        </Button>
+        <Button
+          onClick={handlePublishEntry}
+          disabled={!currentEntry.trim()}
+          variant="outline"
+          className="border-sage-200 hover:bg-sage-50 text-sage-700 rounded-2xl px-8 py-3 shadow-soft hover:shadow-floating transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          <Send className="h-5 w-5 mr-2" />
+          Share
+        </Button>
+      </div>
+
+      {/* AI Insights Section */}
+      <div className="mt-12 mb-8 animate-fade-in">
+        <div className="text-center mb-8">
+          <h2 className="text-2xl font-bold font-sora rem-text-gradient mb-3">
+            AI-Powered Insights ✨
+          </h2>
+          <p className="text-stone-600 font-plus-jakarta">
+            Discover patterns and get personalized recommendations from your reflections
+          </p>
+        </div>
+        
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {/* Progress Patterns */}
+          <div className="bg-gradient-to-br from-sage-50 to-emerald-50 p-6 rounded-3xl border border-sage-200 shadow-soft">
+            <div className="flex items-start space-x-3">
+              <div className="bg-sage-100 p-3 rounded-2xl">
+                <TrendingUp className="h-6 w-6 text-sage-600" />
               </div>
-            </CardContent>
-          </Card>
-        </TabsContent>
-      </Tabs>
+              <div>
+                <h3 className="font-semibold text-sage-800 mb-2 font-sora">Progress Patterns</h3>
+                <p className="text-sage-700 font-plus-jakarta leading-relaxed">
+                  {getDynamicInsight()}
+                </p>
+              </div>
+            </div>
+          </div>
+
+          {/* Recommendations */}
+          <div className="bg-gradient-to-br from-lavender-50 to-pink-50 p-6 rounded-3xl border border-lavender-200 shadow-soft">
+            <div className="flex items-start space-x-3">
+              <div className="bg-lavender-100 p-3 rounded-2xl">
+                <Lightbulb className="h-6 w-6 text-lavender-600" />
+              </div>
+              <div>
+                <h3 className="font-semibold text-lavender-800 mb-2 font-sora">Recommendations</h3>
+                <p className="text-lavender-700 font-plus-jakarta leading-relaxed">
+                  Consider setting a weekly reflection goal. Your entries about learning breakthroughs could inspire others in your community.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          {/* Emotional Insights */}
+          <div className="bg-gradient-to-br from-sky-50 to-indigo-50 p-6 rounded-3xl border border-sky-200 shadow-soft">
+            <div className="flex items-start space-x-3">
+              <div className="bg-sky-100 p-3 rounded-2xl">
+                <Sparkles className="h-6 w-6 text-sky-600" />
+              </div>
+              <div>
+                <h3 className="font-semibold text-sky-800 mb-2 font-sora">Emotional Insights</h3>
+                <p className="text-sky-700 font-plus-jakarta leading-relaxed">
+                  {getMoodInsight()}
+                </p>
+              </div>
+            </div>
+          </div>
+
+          {/* Community Insights */}
+          <div className="bg-gradient-to-br from-peach-50 to-orange-50 p-6 rounded-3xl border border-peach-200 shadow-soft">
+            <div className="flex items-start space-x-3">
+              <div className="bg-peach-100 p-3 rounded-2xl">
+                <Users className="h-6 w-6 text-peach-600" />
+              </div>
+              <div>
+                <h3 className="font-semibold text-peach-800 mb-2 font-sora">Community Insights</h3>
+                <p className="text-peach-700 font-plus-jakarta leading-relaxed">
+                  Your learning journey could help others. Consider sharing insights in your study group rooms.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* AI Insights Toast */}
+      {showAIInsights && (
+        <div className="fixed bottom-6 right-6 bg-white rounded-2xl shadow-floating border border-sage-200 p-4 max-w-sm animate-fade-in z-50">
+          <div className="flex items-start space-x-3">
+            <Sparkles className="h-5 w-5 text-sage-600 mt-1 flex-shrink-0" />
+            <div>
+              <h4 className="font-semibold text-sage-800 mb-1">AI Reflection</h4>
+              <p className="text-sm text-sage-700">
+                Your reflection shows deep self-awareness and growth mindset. Keep nurturing this practice of mindful observation.
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Recent Entries Preview */}
+      {entries.length > 0 && (
+        <div className="fixed bottom-6 left-6 bg-white/90 backdrop-blur-sm rounded-2xl shadow-floating border border-sage-100 p-4 max-w-xs animate-fade-in">
+          <h4 className="font-semibold text-sage-800 mb-3 text-sm">Recent Reflections</h4>
+          <div className="space-y-3">
+            {entries.slice(0, 2).map((entry) => (
+              <div key={entry.id} className="text-xs">
+                <div className="flex items-center space-x-2 mb-1">
+                  <span className="text-lg">{entry.mood}</span>
+                  <span className="text-sage-600 font-medium">
+                    {new Date(entry.date).toLocaleDateString()}
+                  </span>
+                </div>
+                <p className="text-stone-600 line-clamp-2 leading-relaxed">
+                  {entry.content}
+                </p>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
     </div>
   );
 };
