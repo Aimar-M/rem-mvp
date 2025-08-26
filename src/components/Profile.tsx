@@ -24,6 +24,13 @@ import {
   Star,
   Award,
   TrendingUp,
+  Settings,
+  Palette,
+  Code,
+  Camera,
+  Flame,
+  Heart,
+  Sparkles,
 } from "lucide-react";
 
 interface UserProfile {
@@ -46,6 +53,24 @@ interface Achievement {
   icon: React.ReactNode;
   earned: boolean;
   earnedDate?: string;
+  color: string;
+}
+
+interface Project {
+  id: string;
+  title: string;
+  description: string;
+  icon: React.ReactNode;
+  color: string;
+  progress: number;
+}
+
+interface Friend {
+  id: string;
+  name: string;
+  avatar: string;
+  status: "online" | "streak" | "offline";
+  streakDays?: number;
 }
 
 const Profile = () => {
@@ -68,49 +93,110 @@ const Profile = () => {
   const achievements: Achievement[] = [
     {
       id: "1",
-      title: "First Goal",
+      title: "First Steps",
       description: "Created your first goal roadmap",
-      icon: <Target className="h-6 w-6" />,
+      icon: <Target className="h-5 w-5" />,
       earned: true,
       earnedDate: "2023-10-16",
+      color: "bg-gradient-to-br from-pink-200 to-pink-300",
     },
     {
       id: "2",
       title: "Week Warrior",
       description: "Maintained a 7-day streak",
-      icon: <Trophy className="h-6 w-6" />,
+      icon: <Trophy className="h-5 w-5" />,
       earned: true,
       earnedDate: "2023-12-01",
+      color: "bg-gradient-to-br from-yellow-200 to-orange-300",
     },
     {
       id: "3",
-      title: "Reflective Mind",
+      title: "Mindful Soul",
       description: "Wrote 10 journal entries",
-      icon: <BookOpen className="h-6 w-6" />,
+      icon: <BookOpen className="h-5 w-5" />,
       earned: true,
       earnedDate: "2023-11-28",
+      color: "bg-gradient-to-br from-purple-200 to-purple-300",
     },
     {
       id: "4",
-      title: "Team Player",
+      title: "Community Lover",
       description: "Joined 3 collaboration rooms",
-      icon: <Users className="h-6 w-6" />,
+      icon: <Users className="h-5 w-5" />,
       earned: true,
       earnedDate: "2023-11-20",
+      color: "bg-gradient-to-br from-blue-200 to-blue-300",
     },
     {
       id: "5",
       title: "Goal Crusher",
       description: "Complete 5 goals",
-      icon: <Award className="h-6 w-6" />,
+      icon: <Award className="h-5 w-5" />,
       earned: false,
+      color: "bg-gradient-to-br from-green-200 to-green-300",
     },
     {
       id: "6",
-      title: "Consistency King",
+      title: "Consistency Queen",
       description: "Maintain a 30-day streak",
-      icon: <Star className="h-6 w-6" />,
+      icon: <Star className="h-5 w-5" />,
       earned: false,
+      color: "bg-gradient-to-br from-indigo-200 to-indigo-300",
+    },
+  ];
+
+  const projects: Project[] = [
+    {
+      id: "1",
+      title: "Learn React",
+      description: "Master the fundamentals of React development",
+      icon: <Code className="h-5 w-5" />,
+      color: "bg-gradient-to-br from-cyan-100 to-cyan-200",
+      progress: 75,
+    },
+    {
+      id: "2",
+      title: "Photography Portfolio",
+      description: "Build a stunning visual portfolio",
+      icon: <Camera className="h-5 w-5" />,
+      color: "bg-gradient-to-br from-rose-100 to-rose-200",
+      progress: 40,
+    },
+    {
+      id: "3",
+      title: "Design System",
+      description: "Create a cohesive design language",
+      icon: <Palette className="h-5 w-5" />,
+      color: "bg-gradient-to-br from-violet-100 to-violet-200",
+      progress: 60,
+    },
+  ];
+
+  const friends: Friend[] = [
+    {
+      id: "1",
+      name: "Alex Chen",
+      avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Alex",
+      status: "online",
+    },
+    {
+      id: "2",
+      name: "Maya Patel",
+      avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Maya",
+      status: "streak",
+      streakDays: 12,
+    },
+    {
+      id: "3",
+      name: "Jordan Kim",
+      avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Jordan",
+      status: "offline",
+    },
+    {
+      id: "4",
+      name: "Sam Rivera",
+      avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Sam",
+      status: "online",
     },
   ];
 
@@ -127,29 +213,36 @@ const Profile = () => {
   const completionRate = (profile.completedGoals / profile.totalGoals) * 100;
 
   return (
-    <div className="w-full max-w-6xl mx-auto p-4 bg-white">
+    <div className="w-full max-w-7xl mx-auto p-4 bg-gradient-to-br from-pink-50 via-purple-50 to-indigo-50 min-h-screen">
       <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900">My Profile</h1>
-        <p className="text-gray-600 mt-2">
-          Track your progress, achievements, and personal growth
+        <h1 className="text-4xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
+          Your Creative Space ✨
+        </h1>
+        <p className="text-gray-600 mt-2 text-lg">
+          Where your growth story unfolds — you're doing amazing! 🌸
         </p>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
         {/* Profile Card */}
         <div className="lg:col-span-1">
-          <Card>
-            <CardHeader className="text-center">
-              <div className="flex justify-center mb-4">
-                <Avatar className="h-24 w-24">
-                  <AvatarImage src={profile.avatar} alt={profile.name} />
-                  <AvatarFallback className="text-2xl">
-                    {profile.name
-                      .split(" ")
-                      .map((n) => n[0])
-                      .join("")}
-                  </AvatarFallback>
-                </Avatar>
+          <Card className="border-0 shadow-xl bg-white/80 backdrop-blur-sm">
+            <CardHeader className="text-center pb-2">
+              <div className="flex justify-center mb-6">
+                <div className="relative">
+                  <Avatar className="h-32 w-32 border-4 border-white shadow-2xl ring-4 ring-purple-200">
+                    <AvatarImage src={profile.avatar} alt={profile.name} />
+                    <AvatarFallback className="text-3xl bg-gradient-to-br from-purple-400 to-pink-400 text-white">
+                      {profile.name
+                        .split(" ")
+                        .map((n) => n[0])
+                        .join("")}
+                    </AvatarFallback>
+                  </Avatar>
+                  <div className="absolute -bottom-2 -right-2 bg-gradient-to-r from-yellow-400 to-orange-400 rounded-full p-2 shadow-lg">
+                    <Sparkles className="h-4 w-4 text-white" />
+                  </div>
+                </div>
               </div>
               {isEditing ? (
                 <div className="space-y-3">
@@ -159,6 +252,7 @@ const Profile = () => {
                       setEditForm({ ...editForm, name: e.target.value })
                     }
                     placeholder="Full Name"
+                    className="rounded-full border-2 border-purple-200 focus:border-purple-400"
                   />
                   <Input
                     value={editForm.email}
@@ -167,6 +261,7 @@ const Profile = () => {
                     }
                     placeholder="Email"
                     type="email"
+                    className="rounded-full border-2 border-purple-200 focus:border-purple-400"
                   />
                   <Textarea
                     value={editForm.bio}
@@ -175,9 +270,14 @@ const Profile = () => {
                     }
                     placeholder="Tell us about yourself..."
                     rows={3}
+                    className="rounded-2xl border-2 border-purple-200 focus:border-purple-400"
                   />
                   <div className="flex space-x-2">
-                    <Button onClick={handleSaveProfile} size="sm">
+                    <Button
+                      onClick={handleSaveProfile}
+                      size="sm"
+                      className="rounded-full bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600"
+                    >
                       <Save className="h-4 w-4 mr-1" />
                       Save
                     </Button>
@@ -185,6 +285,7 @@ const Profile = () => {
                       onClick={handleCancelEdit}
                       variant="outline"
                       size="sm"
+                      className="rounded-full border-2 border-purple-200 hover:bg-purple-50"
                     >
                       Cancel
                     </Button>
@@ -192,16 +293,20 @@ const Profile = () => {
                 </div>
               ) : (
                 <div>
-                  <CardTitle className="text-xl">{profile.name}</CardTitle>
-                  <CardDescription className="text-sm">
+                  <CardTitle className="text-2xl font-bold text-gray-800">
+                    {profile.name}
+                  </CardTitle>
+                  <CardDescription className="text-purple-600 font-medium">
                     {profile.email}
                   </CardDescription>
-                  <p className="text-sm text-gray-600 mt-3">{profile.bio}</p>
+                  <p className="text-sm text-gray-600 mt-3 leading-relaxed">
+                    {profile.bio}
+                  </p>
                   <Button
                     onClick={() => setIsEditing(true)}
                     variant="outline"
                     size="sm"
-                    className="mt-4"
+                    className="mt-4 rounded-full border-2 border-purple-200 hover:bg-purple-50 hover:border-purple-300"
                   >
                     <Edit className="h-4 w-4 mr-1" />
                     Edit Profile
@@ -209,31 +314,68 @@ const Profile = () => {
                 </div>
               )}
             </CardHeader>
-            <CardContent>
-              <div className="space-y-3">
-                <div className="flex justify-between items-center">
-                  <span className="text-sm text-gray-600">Member since</span>
-                  <span className="text-sm font-medium">
+            <CardContent className="pt-4">
+              <div className="space-y-4">
+                <div className="flex justify-between items-center p-3 bg-gradient-to-r from-purple-100 to-pink-100 rounded-2xl">
+                  <span className="text-sm font-medium text-gray-700">
+                    Member since
+                  </span>
+                  <span className="text-sm font-bold text-purple-700">
                     {new Date(profile.joinDate).toLocaleDateString()}
                   </span>
                 </div>
-                <div className="flex justify-between items-center">
-                  <span className="text-sm text-gray-600">Current streak</span>
-                  <Badge className="bg-orange-100 text-orange-800">
-                    {profile.streakDays} days
-                  </Badge>
+                <div className="flex justify-between items-center p-3 bg-gradient-to-r from-orange-100 to-yellow-100 rounded-2xl">
+                  <span className="text-sm font-medium text-gray-700">
+                    Current streak
+                  </span>
+                  <div className="flex items-center space-x-1">
+                    <Flame className="h-4 w-4 text-orange-500" />
+                    <Badge className="bg-gradient-to-r from-orange-400 to-yellow-400 text-white border-0 rounded-full">
+                      {profile.streakDays} days
+                    </Badge>
+                  </div>
                 </div>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="w-full rounded-full text-gray-500 hover:bg-gray-100 mt-4"
+                >
+                  <Settings className="h-4 w-4 mr-2" />
+                  Settings
+                </Button>
               </div>
             </CardContent>
           </Card>
         </div>
 
-        {/* Stats and Achievements */}
-        <div className="lg:col-span-2">
-          <Tabs defaultValue="stats" className="w-full">
-            <TabsList className="grid w-full grid-cols-2">
-              <TabsTrigger value="stats">Statistics</TabsTrigger>
-              <TabsTrigger value="achievements">Achievements</TabsTrigger>
+        {/* Main Content */}
+        <div className="lg:col-span-3">
+          <Tabs defaultValue="achievements" className="w-full">
+            <TabsList className="grid w-full grid-cols-4 bg-white/80 backdrop-blur-sm rounded-2xl p-1 shadow-lg">
+              <TabsTrigger
+                value="achievements"
+                className="rounded-xl data-[state=active]:bg-gradient-to-r data-[state=active]:from-purple-500 data-[state=active]:to-pink-500 data-[state=active]:text-white"
+              >
+                Badges
+              </TabsTrigger>
+              <TabsTrigger
+                value="projects"
+                className="rounded-xl data-[state=active]:bg-gradient-to-r data-[state=active]:from-purple-500 data-[state=active]:to-pink-500 data-[state=active]:text-white"
+              >
+                Projects
+              </TabsTrigger>
+              <TabsTrigger
+                value="friends"
+                className="rounded-xl data-[state=active]:bg-gradient-to-r data-[state=active]:from-purple-500 data-[state=active]:to-pink-500 data-[state=active]:text-white"
+              >
+                Friends
+              </TabsTrigger>
+              <TabsTrigger
+                value="stats"
+                className="rounded-xl data-[state=active]:bg-gradient-to-r data-[state=active]:from-purple-500 data-[state=active]:to-pink-500 data-[state=active]:text-white"
+              >
+                Stats
+              </TabsTrigger>
             </TabsList>
 
             <TabsContent value="stats" className="space-y-6">
@@ -343,57 +485,180 @@ const Profile = () => {
             </TabsContent>
 
             <TabsContent value="achievements" className="space-y-6">
-              <Card>
-                <CardHeader>
-                  <CardTitle>Achievements</CardTitle>
-                  <CardDescription>
-                    Celebrate your milestones and progress
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    {achievements.map((achievement) => (
-                      <div
-                        key={achievement.id}
-                        className={`p-4 rounded-lg border-2 transition-all ${
-                          achievement.earned
-                            ? "border-green-200 bg-green-50"
-                            : "border-gray-200 bg-gray-50 opacity-60"
-                        }`}
-                      >
-                        <div className="flex items-center space-x-3">
+              <div className="text-center mb-6">
+                <h2 className="text-2xl font-bold text-gray-800 mb-2">
+                  Your Badge Collection 🎖️
+                </h2>
+                <p className="text-gray-600">
+                  Look at all these amazing milestones you've unlocked!
+                </p>
+              </div>
+              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                {achievements.map((achievement) => (
+                  <div
+                    key={achievement.id}
+                    className={`relative transform transition-all duration-300 hover:scale-105 ${
+                      achievement.earned
+                        ? "cursor-pointer"
+                        : "opacity-50 grayscale"
+                    }`}
+                  >
+                    <div
+                      className={`${achievement.color} p-6 rounded-3xl shadow-lg border-4 border-white relative overflow-hidden`}
+                    >
+                      {achievement.earned && (
+                        <div className="absolute top-2 right-2">
+                          <div className="w-3 h-3 bg-green-400 rounded-full border-2 border-white shadow-sm"></div>
+                        </div>
+                      )}
+                      <div className="text-center">
+                        <div className="bg-white/80 backdrop-blur-sm rounded-full p-3 w-fit mx-auto mb-3 shadow-md">
+                          {achievement.icon}
+                        </div>
+                        <h3 className="font-bold text-gray-800 text-sm mb-1">
+                          {achievement.title}
+                        </h3>
+                        <p className="text-xs text-gray-600 leading-tight">
+                          {achievement.description}
+                        </p>
+                        {achievement.earned && achievement.earnedDate && (
+                          <p className="text-xs text-gray-500 mt-2 font-medium">
+                            {new Date(
+                              achievement.earnedDate,
+                            ).toLocaleDateString()}
+                          </p>
+                        )}
+                      </div>
+                      {!achievement.earned && (
+                        <div className="absolute inset-0 bg-gray-200/50 rounded-3xl flex items-center justify-center">
+                          <div className="text-gray-400 text-xs font-medium bg-white/80 px-2 py-1 rounded-full">
+                            Locked
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </TabsContent>
+
+            <TabsContent value="projects" className="space-y-6">
+              <div className="text-center mb-6">
+                <h2 className="text-2xl font-bold text-gray-800 mb-2">
+                  Your Creative Projects 🎨
+                </h2>
+                <p className="text-gray-600">
+                  Keep building, keep growing — you've got this!
+                </p>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {projects.map((project) => (
+                  <Card
+                    key={project.id}
+                    className={`${project.color} border-0 shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-105 cursor-pointer`}
+                  >
+                    <CardHeader className="pb-3">
+                      <div className="flex items-center space-x-3">
+                        <div className="bg-white/80 backdrop-blur-sm rounded-full p-2 shadow-md">
+                          {project.icon}
+                        </div>
+                        <div className="flex-1">
+                          <CardTitle className="text-lg text-gray-800">
+                            {project.title}
+                          </CardTitle>
+                        </div>
+                      </div>
+                    </CardHeader>
+                    <CardContent>
+                      <p className="text-sm text-gray-600 mb-4">
+                        {project.description}
+                      </p>
+                      <div className="space-y-2">
+                        <div className="flex justify-between text-sm">
+                          <span className="text-gray-600">Progress</span>
+                          <span className="font-bold text-gray-800">
+                            {project.progress}%
+                          </span>
+                        </div>
+                        <div className="w-full bg-white/60 rounded-full h-2 overflow-hidden">
                           <div
-                            className={`p-2 rounded-full ${
-                              achievement.earned
-                                ? "bg-green-100 text-green-600"
-                                : "bg-gray-100 text-gray-400"
-                            }`}
-                          >
-                            {achievement.icon}
-                          </div>
-                          <div className="flex-1">
-                            <h3 className="font-medium">{achievement.title}</h3>
-                            <p className="text-sm text-gray-600">
-                              {achievement.description}
-                            </p>
-                            {achievement.earned && achievement.earnedDate && (
-                              <p className="text-xs text-green-600 mt-1">
-                                Earned on{" "}
-                                {new Date(
-                                  achievement.earnedDate,
-                                ).toLocaleDateString()}
-                              </p>
-                            )}
-                          </div>
-                          {achievement.earned && (
-                            <Trophy className="h-5 w-5 text-yellow-500" />
+                            className="h-full bg-gradient-to-r from-purple-400 to-pink-400 rounded-full transition-all duration-500"
+                            style={{ width: `${project.progress}%` }}
+                          ></div>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            </TabsContent>
+
+            <TabsContent value="friends" className="space-y-6">
+              <div className="text-center mb-6">
+                <h2 className="text-2xl font-bold text-gray-800 mb-2">
+                  Your Creative Squad 👥
+                </h2>
+                <p className="text-gray-600">
+                  Amazing people on similar journeys — you inspire each other!
+                </p>
+              </div>
+              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                {friends.map((friend) => (
+                  <div key={friend.id} className="group cursor-pointer">
+                    <div className="bg-white rounded-3xl p-4 shadow-xl border-4 border-white transform transition-all duration-300 hover:scale-105 hover:rotate-1 relative">
+                      {/* Polaroid-style tape */}
+                      <div className="absolute -top-2 left-1/2 transform -translate-x-1/2 w-8 h-4 bg-yellow-200 rounded-sm opacity-80 shadow-sm"></div>
+
+                      <div className="relative">
+                        <Avatar className="h-20 w-20 mx-auto mb-3 border-2 border-gray-200">
+                          <AvatarImage src={friend.avatar} alt={friend.name} />
+                          <AvatarFallback className="bg-gradient-to-br from-purple-400 to-pink-400 text-white">
+                            {friend.name
+                              .split(" ")
+                              .map((n) => n[0])
+                              .join("")}
+                          </AvatarFallback>
+                        </Avatar>
+
+                        {/* Status indicator */}
+                        <div className="absolute top-0 right-0">
+                          {friend.status === "online" && (
+                            <div className="w-4 h-4 bg-green-400 rounded-full border-2 border-white shadow-sm"></div>
+                          )}
+                          {friend.status === "streak" && (
+                            <div className="flex items-center bg-orange-400 rounded-full px-2 py-1 border-2 border-white shadow-sm">
+                              <Flame className="h-3 w-3 text-white" />
+                              <span className="text-xs text-white font-bold ml-1">
+                                {friend.streakDays}
+                              </span>
+                            </div>
+                          )}
+                          {friend.status === "offline" && (
+                            <div className="w-4 h-4 bg-gray-300 rounded-full border-2 border-white shadow-sm"></div>
                           )}
                         </div>
                       </div>
-                    ))}
+
+                      <div className="text-center">
+                        <h3 className="font-bold text-gray-800 text-sm">
+                          {friend.name}
+                        </h3>
+                        <p className="text-xs text-gray-500 mt-1">
+                          {friend.status === "online" && "Online now"}
+                          {friend.status === "streak" &&
+                            `${friend.streakDays} day streak!`}
+                          {friend.status === "offline" && "Offline"}
+                        </p>
+                      </div>
+
+                      {/* Heart reaction on hover */}
+                      <div className="absolute bottom-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                        <Heart className="h-4 w-4 text-pink-400" />
+                      </div>
+                    </div>
                   </div>
-                </CardContent>
-              </Card>
+                ))}
+              </div>
             </TabsContent>
           </Tabs>
         </div>
